@@ -1,7 +1,7 @@
 # Coder Desktop
 
 ![Official project](https://img.shields.io/badge/Official-Coder%20Desktop-111111?style=flat-square)
-![Current version](https://img.shields.io/badge/Current%20version-0.0.42-2f3238?style=flat-square)
+![Current version](https://img.shields.io/badge/Current%20version-0.1.0-2f3238?style=flat-square)
 ![GitHub release](https://img.shields.io/github/v/release/elijahshepherd/Coder-Desktop?style=flat-square&label=GitHub%20Release)
 ![CI](https://img.shields.io/github/actions/workflow/status/elijahshepherd/Coder-Desktop/ci.yml?branch=main&style=flat-square&label=CI)
 ![Node.js 20+](https://img.shields.io/badge/Node.js-20%2B-brightgreen?style=flat-square&logo=node.js&logoColor=white)

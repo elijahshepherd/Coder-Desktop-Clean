@@ -1,7 +1,7 @@
 # Future Features
 
 ![Future features](https://img.shields.io/badge/Future%20features-confirmed%20roadmap-111111?style=flat-square)
-![Current version](https://img.shields.io/badge/Current%20version-0.0.38-2f3238?style=flat-square)
+![Current version](https://img.shields.io/badge/Current%20version-0.1.0-2f3238?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-planned-4e5158?style=flat-square)
 
 This page lists confirmed upcoming Coder Desktop features. These dates are **predicted targets**, not guaranteed release dates. The goal is to give users a clear look at what is planned without turning future work into full feature documentation before it ships.
@@ -17,8 +17,6 @@ These roadmap items moved into implemented feature guides:
 
 ## Skills
 
-**Predicted target:** Before June 7, 2026
-
 **Priority:** Low
 
 Skills will let Coder Desktop use specific instruction sets or data text for focused tasks. A skill can teach the AI how to perform a certain kind of work, follow a repeatable workflow, or take on a specific persona for a chat.
@@ -28,8 +26,6 @@ This should make advanced behavior easier to reuse. Instead of writing the same 
 Skills should stay clear and inspectable. Users should be able to understand what a skill is telling the AI before they use it. The feature should improve consistency without hiding important behavior from the user.
 
 ## Automations
-
-**Predicted target:** Before June 9, 2026
 
 **Priority:** Low
 
@@ -43,8 +39,6 @@ Automations should be careful and visible. Users should be able to see what is s
 
 ## Expanded AI Providers
 
-**Predicted target:** By June 9, 2026
-
 **Priority:** Low
 
 Coder Desktop will add support for more AI provider options so users can choose the services that fit their work, pricing, speed, and model preferences. Planned providers include Gemini, OpenRouter, DeepSeek, Grok, and Groq.
@@ -54,8 +48,6 @@ This should make Coder Desktop more flexible without changing the core workflow.
 Provider expansion should follow the same security model as the current provider system. API keys should stay out of public renderer state, provider base URLs should be validated, and provider errors should appear as readable cards instead of raw technical dumps.
 
 ## Coder Desktop Remote
-
-**Predicted target:** June 11, 2026
 
 **Priority:** Low
 

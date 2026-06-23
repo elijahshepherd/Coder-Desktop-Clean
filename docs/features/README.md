@@ -1,7 +1,7 @@
 # Feature Guide
 
 ![Feature guide](https://img.shields.io/badge/Guide-features-111111?style=flat-square)
-![Current version](https://img.shields.io/badge/Current%20version-0.0.38-2f3238?style=flat-square)
+![Current version](https://img.shields.io/badge/Current%20version-0.1.0-2f3238?style=flat-square)
 ![Desktop app](https://img.shields.io/badge/Desktop-real%20application-4e5158?style=flat-square)
 ![Local tools](https://img.shields.io/badge/Local%20tools-main%20process-6f747d?style=flat-square)
 ![Provider fallback](https://img.shields.io/badge/Providers-fallback%20models-202124?style=flat-square)
