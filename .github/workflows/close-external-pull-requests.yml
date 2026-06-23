@@ -1,0 +1,47 @@
+name: Close External Pull Requests
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  close-external-pull-request:
+    if: ${{ github.event.pull_request.user.login != github.repository_owner }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment and close
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pull_number = context.payload.pull_request.number;
+            const body = [
+              'Thanks for taking the time to help Coder Desktop.',
+              '',
+              'This repository is read-only for outside code contributions, so external pull requests are not accepted by default.',
+              'Please open an issue with the matching form instead so the maintainer has the details needed to triage it.',
+              '',
+              'Issue forms: https://github.com/elijahshepherd/Coder-Desktop/issues/new/choose'
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: pull_number,
+              body
+            });
+
+            await github.rest.pulls.update({
+              owner,
+              repo,
+              pull_number,
+              state: 'closed'
+            });

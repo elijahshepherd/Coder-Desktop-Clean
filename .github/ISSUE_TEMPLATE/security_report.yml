@@ -1,0 +1,25 @@
+name: Security report
+description: Report a security concern.
+title: "[Security]: "
+labels:
+  - type: security
+body:
+  - type: markdown
+    attributes:
+      value: Please avoid posting active secrets or exploit details publicly.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction

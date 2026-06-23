@@ -1,0 +1,34 @@
+name: Bug report
+description: Report a reproducible issue in Coder Desktop.
+title: "[Bug]: "
+labels:
+  - type: bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping make Coder Desktop better.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: List each step clearly.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Add anything useful.

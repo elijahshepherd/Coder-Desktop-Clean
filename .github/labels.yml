@@ -1,0 +1,48 @@
+- name: "type: bug"
+  color: cc3d3d
+  description: Something is broken.
+- name: "type: feature"
+  color: 4f8fba
+  description: A new capability or workflow.
+- name: "type: docs"
+  color: 6f7bd1
+  description: Documentation updates.
+- name: "type: release"
+  color: 8bc28b
+  description: Release, packaging, or distribution work.
+- name: "Feedback"
+  color: 6f747d
+  description: Message feedback submitted from Coder Desktop.
+- name: "Like"
+  color: 8bc28b
+  description: Positive assistant response feedback.
+- name: "Dislike"
+  color: cc3d3d
+  description: Negative assistant response feedback.
+- name: "Bug"
+  color: cc3d3d
+  description: Automatic app bug report from Coder Desktop.
+- name: "Auto report"
+  color: f2d06b
+  description: Issue opened by the automatic report system.
+- name: security
+  color: c68f2f
+  description: Security-sensitive work.
+- name: "area: app"
+  color: 8fd4b0
+  description: Desktop app or renderer changes.
+- name: "area: docs"
+  color: b6b2ff
+  description: Documentation changes.
+- name: "area: release"
+  color: f0c36d
+  description: Packaging and release changes.
+- name: "area: github"
+  color: d5d8de
+  description: GitHub automation and repository operations.
+- name: "status: needs review"
+  color: f2d06b
+  description: Needs maintainer review.
+- name: "status: blocked"
+  color: 888888
+  description: Blocked on more information or external work.

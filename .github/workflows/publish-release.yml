@@ -1,0 +1,183 @@
+name: Publish GitHub Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows release assets
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Windows downloads
+        shell: pwsh
+        run: |
+          $version = "${env:GITHUB_REF_NAME}".TrimStart("v")
+          npm run release:current
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          $downloads = "downloads\$version"
+          $releaseUpload = "release-upload"
+          if (Test-Path -LiteralPath $releaseUpload) {
+            Remove-Item -LiteralPath $releaseUpload -Recurse -Force
+          }
+          New-Item -ItemType Directory -Force -Path $releaseUpload | Out-Null
+
+          Get-ChildItem -LiteralPath $downloads -File |
+            Where-Object {
+              ($_.Extension -in @(".exe", ".zip", ".blockmap") -and $_.Name -match "-win-") -or
+              $_.Name -eq "Coder-Desktop-$version-windows-trust-report.txt"
+            } |
+            ForEach-Object {
+              if ($_.Extension -eq ".exe" -and $_.Length -lt 10MB) {
+                throw "Windows executable is too small to be a real application download: $($_.FullName)"
+              }
+              Copy-Item -LiteralPath $_.FullName -Destination $releaseUpload
+            }
+
+          Get-ChildItem -LiteralPath $releaseUpload -File | Format-Table Name, Length
+      - name: Upload Windows assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: coder-desktop-windows-release-assets
+          path: release-upload/*
+          if-no-files-found: error
+
+  build-macos:
+    name: Build macOS release assets
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build macOS ZIPs
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          rm -rf release-upload
+          npm run build
+          npm exec electron-builder -- --mac zip --x64 --arm64
+          mkdir -p "downloads/$version"
+          mkdir -p release-upload
+          cp "release/Coder-Desktop-$version-mac-x64.zip" "downloads/$version/"
+          cp "release/Coder-Desktop-$version-mac-arm64.zip" "downloads/$version/"
+          cp "downloads/$version/Coder-Desktop-$version-mac-x64.zip" release-upload/
+          cp "downloads/$version/Coder-Desktop-$version-mac-arm64.zip" release-upload/
+
+      - name: Upload macOS assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: coder-desktop-macos-release-assets
+          path: release-upload/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish release assets
+    runs-on: ubuntu-latest
+    needs:
+      - build-windows
+      - build-macos
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Download built release assets
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Prepare release folder and manifest
+        shell: bash
+        run: |
+          set -euxo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          rm -rf "downloads/$version"
+          mkdir -p "downloads/$version"
+
+          is_lfs_pointer() {
+            local file="$1"
+            local size
+            size="$(wc -c < "$file")"
+            [ "$size" -le 1024 ] && head -n 1 "$file" | grep -q '^version https://git-lfs.github.com/spec/v1'
+          }
+
+          find release-assets -type f -print
+          while IFS= read -r file; do
+            case "$file" in
+              *.zip|*.exe|*.dmg|*.AppImage|*.blockmap|*windows-trust-report.txt)
+                if is_lfs_pointer "$file"; then
+                  echo "Skipping Git LFS pointer artifact: $file"
+                  continue
+                fi
+                cp -v "$file" "downloads/$version/"
+                ;;
+            esac
+          done < <(find release-assets -type f)
+
+          release_file_count="$(find "downloads/$version" -maxdepth 1 -type f \( -name "*.zip" -o -name "*.exe" -o -name "*.dmg" -o -name "*.AppImage" -o -name "*.blockmap" \) | wc -l)"
+          test "$release_file_count" -gt 0
+          ls -lh "downloads/$version"
+          node scripts/write-download-manifest.mjs
+          ls -lh "downloads/$version"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          upload_args=()
+          for file in "downloads/$version"/*; do
+            if [ -f "$file" ]; then
+              upload_args+=("$file")
+            fi
+          done
+
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "${upload_args[@]}" --clobber
+            gh release edit "$GITHUB_REF_NAME" \
+              --title "Coder Desktop $version" \
+              --notes-file "docs/releases/$version.md" \
+              --latest
+          else
+            gh release create "$GITHUB_REF_NAME" "${upload_args[@]}" \
+              --title "Coder Desktop $version" \
+              --notes-file "docs/releases/$version.md" \
+              --latest
+          fi
