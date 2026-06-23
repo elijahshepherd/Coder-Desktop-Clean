@@ -13,6 +13,8 @@
 ![Windows](https://img.shields.io/badge/Windows-installer-0078d4?style=flat-square&logo=windows&logoColor=white)
 ![macOS](https://img.shields.io/badge/macOS-zip%20builds-999999?style=flat-square&logo=apple&logoColor=white)
 
+<img width="2752" height="1536" alt="use_the_same_style_of_202606222219" src="https://github.com/user-attachments/assets/b2cf1555-e9f5-482e-bd28-16cc7d902d88" />
+
 Coder Desktop is a local-first AI coding workspace that gives you the power of AI-assisted development inside a real desktop app while keeping full ownership of your projects, files, tools, and workflow in one secure, unified environment.
 
 The goal is simple: make software development feel calmer, more capable, and more under the user's control.
