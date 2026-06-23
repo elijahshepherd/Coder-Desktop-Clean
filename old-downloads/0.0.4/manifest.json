@@ -1,0 +1,55 @@
+{
+  "version": "0.0.4",
+  "generatedAt": "2026-06-03T01:38:12.968Z",
+  "artifacts": [
+    {
+      "name": "Coder-Desktop-0.0.4-mac-arm64.zip",
+      "platform": "macOS",
+      "format": "ZIP archive",
+      "sizeBytes": 115153934,
+      "sha256": "7aae13ecfc5293dc96d4f7425969991f59cfdc1dea66606668513fd4eac9b58c",
+      "committedWithGitLfs": true
+    },
+    {
+      "name": "Coder-Desktop-0.0.4-mac-x64.zip",
+      "platform": "macOS",
+      "format": "ZIP archive",
+      "sizeBytes": 120384916,
+      "sha256": "ca71e4651319c769af37b4dab597fdeaf88d7c03599d6571533f21ed17e71f69",
+      "committedWithGitLfs": true
+    },
+    {
+      "name": "Coder-Desktop-0.0.4-win-arm64.exe",
+      "platform": "Windows",
+      "format": "Portable EXE",
+      "sizeBytes": 95533063,
+      "sha256": "4089ca32b5bdc856c275bf82635f35be7eefdc902f7e8da4ebfb345aa7dae5ca",
+      "committedWithGitLfs": true
+    },
+    {
+      "name": "Coder-Desktop-0.0.4-win-arm64.zip",
+      "platform": "Windows",
+      "format": "ZIP archive",
+      "sizeBytes": 141082560,
+      "sha256": "c5317a43c1a7b1cbbbfd463b814e09755bccae56b971e2e301a20b130c070412",
+      "committedWithGitLfs": true
+    },
+    {
+      "name": "Coder-Desktop-0.0.4-win-x64.exe",
+      "platform": "Windows",
+      "format": "Portable EXE",
+      "sizeBytes": 93328233,
+      "sha256": "4ad76aa67f16f6283073c5aee150417e675416d0f1930ab033f89c8071bb4380",
+      "committedWithGitLfs": true
+    },
+    {
+      "name": "Coder-Desktop-0.0.4-win-x64.zip",
+      "platform": "Windows",
+      "format": "ZIP archive",
+      "sizeBytes": 142935051,
+      "sha256": "04b9f3ce382c04569fc090654cc7d4919abc4f2a1668c7d99fb077304f4b70c9",
+      "committedWithGitLfs": true
+    }
+  ],
+  "notes": "Release binaries are stored with Git LFS. macOS application ZIPs must be built on macOS or by the macOS GitHub Actions workflow."
+}

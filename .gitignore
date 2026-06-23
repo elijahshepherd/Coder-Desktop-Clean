@@ -1,0 +1,14 @@
+node_modules/
+dist/
+release/
+.vite/
+.cache/
+coverage/
+output/
+*.log
+*.tmp
+*.local
+.env
+.env.*
+!.env.example
+AI_PROJECT_RULES.md

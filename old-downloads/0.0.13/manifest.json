@@ -1,0 +1,47 @@
+{
+  "version": "0.0.13",
+  "generatedAt": "2026-06-04T03:24:16.843Z",
+  "artifacts": [
+    {
+      "name": "Coder-Desktop-0.0.13-mac-arm64.zip",
+      "platform": "macOS",
+      "format": "ZIP archive",
+      "sizeBytes": 115229130,
+      "sha256": "d4af460ff5c8331e169a5e903fbea073d9babe2271bcd1a0c4272d703e03835c",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.13-mac-x64.zip",
+      "platform": "macOS",
+      "format": "ZIP archive",
+      "sizeBytes": 120460123,
+      "sha256": "b677c78c4961fc21a130d871c30cd53a3da047bc146dc1b7a39ce4b9f8c335ca",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.13-win-arm64.zip",
+      "platform": "Windows",
+      "format": "ZIP archive",
+      "sizeBytes": 146416083,
+      "sha256": "e842ce9321461e6a59a53f412514f3d95e07d29ef75c32aadb3256c7a052f451",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.13-win-x64.exe",
+      "platform": "Windows",
+      "format": "Portable EXE",
+      "sizeBytes": 93417756,
+      "sha256": "751bcff973f66419c1e0e95e411849a0db4bb62283521382b72a403525294341",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.13-win-x64.zip",
+      "platform": "Windows",
+      "format": "ZIP archive",
+      "sizeBytes": 148188228,
+      "sha256": "3cc859bfefa68836a5ced97e176d3fb0f755a6e608f24f29d48dbb6a0c1ed3a5",
+      "releaseSource": "GitHub Releases"
+    }
+  ],
+  "notes": "Release binaries are published through GitHub Releases. macOS application ZIPs must be built on macOS or by the macOS GitHub Actions workflow."
+}

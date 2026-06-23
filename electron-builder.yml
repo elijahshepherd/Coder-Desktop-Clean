@@ -1,0 +1,61 @@
+appId: com.elijahshepherd.coderdesktop
+productName: Coder Desktop
+copyright: Copyright (c) 2026 Elijah Shepherd
+asar: true
+afterPack: scripts/stamp-windows-executable.cjs
+directories:
+  output: release
+extraResources:
+  - from: build/icon.png
+    to: icon.png
+files:
+  - dist/**
+  - package.json
+win:
+  icon: build/icon.ico
+  artifactName: Coder-Desktop-${version}-win-${arch}.${ext}
+  requestedExecutionLevel: asInvoker
+  legalTrademarks: Coder Desktop is open source software
+  forceCodeSigning: false
+  signAndEditExecutable: false
+  verifyUpdateCodeSignature: false
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+    - target: zip
+      arch:
+        - x64
+portable:
+  artifactName: Coder-Desktop-${version}-win-${arch}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Coder Desktop
+  uninstallDisplayName: Coder Desktop
+  include: build/installer.nsh
+  artifactName: Coder-Desktop-${version}-setup-win-${arch}.${ext}
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+mac:
+  icon: build/icon.icns
+  category: public.app-category.developer-tools
+  artifactName: Coder-Desktop-${version}-mac-${arch}.${ext}
+  target:
+    - dmg
+    - zip
+linux:
+  icon: build/icon.png
+  category: Development
+  artifactName: Coder-Desktop-${version}-linux-${arch}.${ext}
+  target:
+    - AppImage
+    - zip
+publish: null

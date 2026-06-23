@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Image Generation Animation</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #121212;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            touch-action: none;
+        }
+
+        #ui-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            z-index: 10;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 240px;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+
+        .ui-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            padding: 0;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .icon-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        #ui-content {
+            margin-top: 12px;
+            max-height: 200px;
+            opacity: 1;
+            transition: max-height 0.3s ease, opacity 0.2s ease;
+            overflow: hidden;
+        }
+
+        p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.4;
+        }
+
+        #ui-container.minimized {
+            width: 80px;
+        }
+        #ui-container.minimized h1 {
+            display: none;
+        }
+        #ui-container.minimized #ui-content {
+            max-height: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.4);
+            font-size: 0.7rem;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-container">
+        <div class="ui-header">
+            <div class="action-group">
+                <button id="minimize-btn" class="icon-btn" title="Toggle UI">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4 7 12 15 20 7"></polyline></svg>
+                </button>
+            </div>
+            <h1>Generating</h1>
+        </div>
+        <div id="ui-content">
+            <p>Creating your image...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.js';
+
+        let isCleanView = false;
+
+        // --- Setup True 3D Plasma Canvas Layout ---
+        const sliceSize = 256;
+        const plasmaCanvas = document.createElement('canvas');
+        plasmaCanvas.width = sliceSize * 3;  // 768
+        plasmaCanvas.height = sliceSize;     // 256
+        const plasmaCtx = plasmaCanvas.getContext('2d');
+        const plasmaImgData = plasmaCtx.createImageData(sliceSize * 3, sliceSize);
+
+        let currentTexture = new THREE.CanvasTexture(plasmaCanvas);
+        const faces = [];
+        const nodeMeshes = [];
+        let cornerMarker;
+
+        document.getElementById('minimize-btn').addEventListener('click', () => {
+            document.getElementById('ui-container').classList.toggle('minimized');
+        });
+
+        const scene = new THREE.Scene();
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        const aspect = window.innerWidth / window.innerHeight;
+        const frustumSize = 800;
+        const camera = new THREE.OrthographicCamera(frustumSize * aspect / -2, frustumSize * aspect / 2, frustumSize / 2, frustumSize / -2, 0.1, 1000);
+        camera.position.z = 100;
+
+        // --- 7 Nodes Definition ---
+        const s = 150;
+        const controlNodes = [
+            [0, 0],             // 0: CENTER
+            [0, s * 1.15],      // 1: Top
+            [s, s * 0.575],     // 2: Top Right
+            [s, -s * 0.575],    // 3: Bottom Right
+            [0, -s * 1.15],     // 4: Bottom
+            [-s, -s * 0.575],   // 5: Bottom Left
+            [-s, s * 0.575]     // 6: Top Left
+        ];
+
+        const nodeGeom = new THREE.CircleGeometry(7, 32);
+        const nodeMat = new THREE.MeshBasicMaterial({ color: 0xff3333, depthTest: false, transparent: true, opacity: 0.6 });
+
+        controlNodes.forEach((pos, idx) => {
+            const mesh = new THREE.Mesh(nodeGeom, nodeMat);
+            mesh.position.set(pos[0], pos[1], 0);
+            mesh.renderOrder = 999;
+            scene.add(mesh);
+            nodeMeshes.push(mesh);
+
+            if (idx === 0) {
+                const markerGeom = new THREE.CircleGeometry(4, 32);
+                const markerMat = new THREE.MeshBasicMaterial({ color: 0xff0000, depthTest: false });
+                cornerMarker = new THREE.Mesh(markerGeom, markerMat);
+                cornerMarker.renderOrder = 1000;
+                scene.add(cornerMarker);
+            }
+        });
+
+        // --- Plane Definitions & 3D Mapping Setup ---
+        const faceDefs = [
+            [6, 1, 0, 2], // 0: Top Face
+            [6, 0, 5, 4], // 1: Left Face
+            [0, 2, 4, 3]  // 2: Right Face
+        ];
+
+        faceDefs.forEach((corners, faceIdx) => {
+            const geom = new THREE.PlaneGeometry(1, 1, 16, 16);
+
+            const origUVs = [];
+            const uvAttr = geom.attributes.uv;
+            for (let i = 0; i < uvAttr.count; i++) {
+                origUVs.push(new THREE.Vector2(uvAttr.getX(i), uvAttr.getY(i)));
+            }
+
+            let colIndex = 0;
+            if (faceIdx === 1) colIndex = 0;
+            if (faceIdx === 2) colIndex = 1;
+            if (faceIdx === 0) colIndex = 2;
+
+            for (let i = 0; i < uvAttr.count; i++) {
+                let u = uvAttr.getX(i);
+                let newU = (u / 3) + (colIndex / 3);
+                uvAttr.setX(i, newU);
+            }
+            uvAttr.needsUpdate = true;
+
+            const mesh = new THREE.Mesh(geom, new THREE.MeshBasicMaterial({ map: currentTexture, transparent: true, side: THREE.DoubleSide }));
+            scene.add(mesh);
+            faces.push({ mesh, corners, origUVs });
+        });
+
+        function updateWarp() {
+            faces.forEach(f => {
+                const pos = f.mesh.geometry.attributes.position;
+                const p = f.corners.map(c => nodeMeshes[c].position);
+                for (let i = 0; i < pos.count; i++) {
+                    const u = f.origUVs[i].x;
+                    const v = f.origUVs[i].y;
+                    const x = (1-u)*v*p[0].x + u*v*p[1].x + (1-u)*(1-v)*p[2].x + u*(1-v)*p[3].x;
+                    const y = (1-u)*v*p[0].y + u*v*p[1].y + (1-u)*(1-v)*p[2].y + u*(1-v)*p[3].y;
+                    pos.setXY(i, x, y);
+                }
+                pos.needsUpdate = true;
+            });
+            cornerMarker.position.copy(nodeMeshes[0].position);
+        }
+        updateWarp();
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let activeNode = null;
+
+        const handleMove = (e) => {
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            const cy = e.touches ? e.touches[0].clientY : e.clientY;
+            mouse.x = (cx / window.innerWidth) * 2 - 1;
+            mouse.y = -(cy / window.innerHeight) * 2 + 1;
+
+            if (activeNode) {
+                raycaster.setFromCamera(mouse, camera);
+                const plane = new THREE.Plane(new THREE.Vector3(0,0,1), 0);
+                const pt = new THREE.Vector3();
+                raycaster.ray.intersectPlane(plane, pt);
+
+                activeNode.position.copy(pt);
+                updateWarp();
+            }
+        };
+
+        window.addEventListener('mousedown', () => {
+            raycaster.setFromCamera(mouse, camera);
+            const hits = raycaster.intersectObjects(nodeMeshes);
+            if (hits.length) activeNode = hits[0].object;
+        });
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', () => activeNode = null);
+        window.addEventListener('touchstart', (e) => {
+            handleMove(e);
+            const hits = raycaster.intersectObjects(nodeMeshes);
+            if (hits.length) activeNode = hits[0].object;
+        });
+        window.addEventListener('touchmove', handleMove);
+        window.addEventListener('touchend', () => activeNode = null);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                isCleanView = !isCleanView;
+                document.getElementById('ui-container').classList.toggle('hidden', isCleanView);
+                nodeMeshes.forEach(n => n.visible = !isCleanView);
+                cornerMarker.visible = !isCleanView;
+            }
+        });
+
+        // --- 3D Volumetric Field Generator ---
+        function updatePlasmaTexture(time) {
+            const data = plasmaImgData.data;
+            let index = 0;
+
+            const w = plasmaCanvas.width;
+            const h = plasmaCanvas.height;
+
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+
+                    let u = (x % sliceSize) / (sliceSize - 1.0);
+                    let v = 1.0 - (y / (sliceSize - 1.0));
+
+                    let X, Y, Z;
+
+                    if (x < sliceSize) {
+                        X = -1.0 + 2.0 * u;
+                        Y = -1.0 + 2.0 * v;
+                        Z = 1.0;
+                    } else if (x < sliceSize * 2) {
+                        X = 1.0;
+                        Y = -1.0 + 2.0 * v;
+                        Z = 1.0 - 2.0 * u;
+                    } else {
+                        X = 1.0 - 2.0 * v;
+                        Y = 1.0;
+                        Z = 1.0 - 2.0 * u;
+                    }
+
+                    // --- Volumetric Mathematical Function ---
+                    // Balanced Frequencies (Lowered from 18/35 to 8/18 for cleanly structured shapes)
+                    let v1 = Math.sin(X * 8.0 + time * 1.5) * Math.cos(Y * 8.0 - time * 1.0);
+
+                    let coreX = 0.6 * Math.sin(time * 0.5);
+                    let coreY = 0.6 * Math.cos(time * 0.6);
+                    let coreZ = 0.6 * Math.sin(time * 0.7);
+                    let dist = Math.sqrt(Math.pow(X - coreX, 2) + Math.pow(Y - coreY, 2) + Math.pow(Z - coreZ, 2));
+                    let v2 = Math.sin(dist * 18.0 - time * 4.0);
+
+                    let v3 = Math.sin((X - Y + Z) * 6.0 + time * 0.5);
+
+                    // Combine fields
+                    let total = (v1 + v2 + v3) / 2.0;
+
+                    // Medium Banding: Clean, intermediate wrapping frequency
+                    let bands = Math.sin(total * 4.5);
+
+                    // High Contrast Grayscale: Push values outwards toward black/white boundaries
+                    // but leave enough room for a smooth zebra-gradient edge
+                    let contrastFactor = 3.5;
+                    let normalized = 0.5 + (bands * contrastFactor);
+
+                    // Clamp safely between 0 and 1
+                    normalized = Math.max(0.0, Math.min(1.0, normalized));
+
+                    // Map to 0-255 grayscale value
+                    let bw = Math.floor(normalized * 255);
+
+                    data[index++] = bw;   // R
+                    data[index++] = bw;   // G
+                    data[index++] = bw;   // B
+                    data[index++] = 255;  // Alpha
+                }
+            }
+            plasmaCtx.putImageData(plasmaImgData, 0, 0);
+        }
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsed = clock.getElapsedTime();
+
+            if (!isUsingCustomTexture) {
+                updatePlasmaTexture(elapsed);
+                currentTexture.needsUpdate = true;
+            }
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            const aspect = window.innerWidth / window.innerHeight;
+            camera.left = -frustumSize * aspect / 2; camera.right = frustumSize * aspect / 2;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

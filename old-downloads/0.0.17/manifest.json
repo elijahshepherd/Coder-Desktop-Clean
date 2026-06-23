@@ -1,0 +1,63 @@
+{
+  "version": "0.0.17",
+  "generatedAt": "2026-06-04T11:51:40.257Z",
+  "artifacts": [
+    {
+      "name": "Coder-Desktop-0.0.17-mac-arm64.zip",
+      "platform": "macOS",
+      "format": "ZIP archive",
+      "sizeBytes": 116207470,
+      "sha256": "8ea7f35e0f249fab37626a7f85a70419875f13bf2d1f0d52db95a431621620d0",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.17-mac-x64.zip",
+      "platform": "macOS",
+      "format": "ZIP archive",
+      "sizeBytes": 121438463,
+      "sha256": "774348ecac646ac2737a999921790740b0c3afd82770975e6a238a5267d2979d",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.17-setup-win-x64.exe",
+      "platform": "Windows",
+      "format": "Windows installer",
+      "sizeBytes": 104493251,
+      "sha256": "f70cbc350c55f3898141f33e044aab0c55ef25239c43cded7e28117980610dc7",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.17-setup-win-x64.exe.blockmap",
+      "platform": "Windows",
+      "format": "Block map",
+      "sizeBytes": 110445,
+      "sha256": "b63890b176642340acb286b03ad5a12c146f62f03bc0707de439c9faed94e6fa",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.17-win-arm64.zip",
+      "platform": "Windows",
+      "format": "ZIP archive",
+      "sizeBytes": 147506219,
+      "sha256": "729d9ff6a5d80876159c652b2d6aabc39eb55bf7e58426fc82886309180bf3f5",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.17-win-x64.exe",
+      "platform": "Windows",
+      "format": "Portable EXE",
+      "sizeBytes": 94473981,
+      "sha256": "424c052f88b4c474dc434c87ea79924952afdf8c0a5d6de3007590ab7eae278e",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.17-win-x64.zip",
+      "platform": "Windows",
+      "format": "ZIP archive",
+      "sizeBytes": 149279417,
+      "sha256": "3bd8d637bfafbc70b06aff98e4c35916e818f1f1dbba6b57a0cfbac3cb918757",
+      "releaseSource": "GitHub Releases"
+    }
+  ],
+  "notes": "Release binaries are published through GitHub Releases. macOS application ZIPs must be built on macOS or by the macOS GitHub Actions workflow."
+}

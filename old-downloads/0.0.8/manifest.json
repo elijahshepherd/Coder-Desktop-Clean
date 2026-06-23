@@ -1,0 +1,71 @@
+{
+  "version": "0.0.8",
+  "generatedAt": "2026-06-03T12:04:13.986Z",
+  "artifacts": [
+    {
+      "name": "Coder-Desktop-0.0.8-mac-arm64.zip",
+      "platform": "macOS",
+      "format": "ZIP archive",
+      "sizeBytes": 115237755,
+      "sha256": "1bd78037972be3b2e09013f1e04f4d3dc771c516e6a999d7c54936552078b7fa",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.8-mac-x64.zip",
+      "platform": "macOS",
+      "format": "ZIP archive",
+      "sizeBytes": 120468747,
+      "sha256": "2e90a48f8cec7641328879d5be773633b07222c32c3bc4c33d29f7172838e45b",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.8-setup-win-arm64.exe",
+      "platform": "Windows",
+      "format": "Windows installer",
+      "sizeBytes": 105008782,
+      "sha256": "344674403df9cb839245295af88e40a0af109c52cef070c33f917cb2353ff1ab",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.8-setup-win-arm64.exe.blockmap",
+      "platform": "Windows",
+      "format": "Block map",
+      "sizeBytes": 111025,
+      "sha256": "5561646e4b8aeecc6a5b7e6bc820cfa541b69c92c3fb01a663490c8bc6a03c44",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.8-setup-win-x64.exe",
+      "platform": "Windows",
+      "format": "Windows installer",
+      "sizeBytes": 103455412,
+      "sha256": "df82b4beafd2b654043a1678cbc0f4b98ff06899a65bfd2895f9510c082176d5",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.8-setup-win-x64.exe.blockmap",
+      "platform": "Windows",
+      "format": "Block map",
+      "sizeBytes": 109150,
+      "sha256": "918c4293e929dc581fe22148b2f12b483a81881947ee010d064243f83d9d31b2",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.8-win-arm64.zip",
+      "platform": "Windows",
+      "format": "ZIP archive",
+      "sizeBytes": 146483969,
+      "sha256": "9b5797b52478385b0e61a69ed3c6de4021223dc2653a0dd8b75096a092329c52",
+      "releaseSource": "GitHub Releases"
+    },
+    {
+      "name": "Coder-Desktop-0.0.8-win-x64.zip",
+      "platform": "Windows",
+      "format": "ZIP archive",
+      "sizeBytes": 148197894,
+      "sha256": "c8e0e3cbd574ff3be77f4f96ca8f4022a70351bb328f372adcda490f4b04d540",
+      "releaseSource": "GitHub Releases"
+    }
+  ],
+  "notes": "Release binaries are published through GitHub Releases. macOS application ZIPs must be built on macOS or by the macOS GitHub Actions workflow."
+}
