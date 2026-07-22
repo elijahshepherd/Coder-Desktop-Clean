@@ -208,6 +208,61 @@ npx vitest run src/shared/providers.test.ts
 
 ---
 
+## Release Notes Format
+
+All release notes in `docs/releases/{version}.md` must follow the template in `docs/releases/TEMPLATE.md`:
+
+```
+# {Five-word summary}
+
+Short 1 sentence explaining the change.
+
+---
+
+## Highlights
+
+- Key user-facing change
+- Another highlight
+
+## Added
+
+- New feature or capability
+- New platform support
+
+## Removed
+
+- Deprecated feature removed
+- Artifact type no longer produced
+
+## Other Changes
+
+- Internal refactor
+- Build improvement
+- Dependency update
+
+---
+
+## Install
+
+**Windows**: Download `Coder-Desktop-{version}-setup-win-x64.exe` and run it. The installer supports automatic updates.
+
+**macOS (Intel)**: Download `Coder-Desktop-{version}-mac-x64.zip`, extract, and move `Coder Desktop.app` to Applications.
+
+**macOS (Apple Silicon)**: Download `Coder-Desktop-{version}-mac-arm64.zip`, extract, and move `Coder Desktop.app` to Applications.
+
+All artifacts include SHA256 checksums in the release manifest.
+
+---
+
+## Notes
+
+- Any limitations, requirements, or important information
+- macOS builds must run on macOS (GitHub Actions or local)
+- Windows SmartScreen may warn on unsigned builds
+```
+
+---
+
 ## Documentation References
 
 - `docs/architecture.md` — Full architecture diagram and data flow
