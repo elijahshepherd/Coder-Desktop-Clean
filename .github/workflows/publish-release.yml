@@ -90,13 +90,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-        - name: Sync version from tag
-          shell: bash
-          run: |
-            version="${GITHUB_REF_NAME#v}"
-            npm pkg set version="$version"
+            - name: Sync version from tag
+              shell: bash
+              run: |
+                version="${GITHUB_REF_NAME#v}"
+                npm pkg set version="$version"
 
-        - name: Build macOS ZIPs
+            - name: Build macOS ZIPs
         run: |
           version="${GITHUB_REF_NAME#v}"
           versionPrefix="v$version"
