@@ -1,6 +1,6 @@
 param(
-  [ValidateSet("portable", "nsis")]
-  [string]$Target = "portable",
+  [ValidateSet("x64", "arm64")]
+  [string[]]$Arch = @("x64", "arm64"),
 
   [switch]$SkipBuild
 )
@@ -12,7 +12,6 @@ $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $releasePath = Join-Path $repoRoot "release"
 $package = Get-Content -Raw -LiteralPath (Join-Path $repoRoot "package.json") | ConvertFrom-Json
 $version = [string]$package.version
-$rcedit = Join-Path $repoRoot "node_modules\electron-winstaller\vendor\rcedit.exe"
 
 if (-not $env:CSC_LINK -and $env:WIN_CSC_LINK) {
   $env:CSC_LINK = $env:WIN_CSC_LINK
@@ -38,33 +37,6 @@ function Invoke-Checked {
   }
 }
 
-function Set-CoderDesktopMetadata {
-  param(
-    [Parameter(Mandatory = $true)]
-    [string]$Path
-  )
-
-  if (-not (Test-Path -LiteralPath $Path)) {
-    throw "Expected executable was not found: $Path"
-  }
-
-  & $rcedit $Path `
-    --set-version-string FileDescription "Coder Desktop - Local-first AI coding workspace" `
-    --set-version-string ProductName "Coder Desktop" `
-    --set-version-string CompanyName "Elijah Shepherd" `
-    --set-version-string InternalName "Coder Desktop" `
-    --set-version-string OriginalFilename (Split-Path $Path -Leaf) `
-    --set-version-string LegalCopyright "Copyright (c) 2026 Elijah Shepherd" `
-    --set-version-string LegalTrademarks "Coder Desktop is open source software" `
-    --set-file-version $version `
-    --set-product-version $version `
-    --set-icon (Join-Path $repoRoot "build\icon.ico")
-
-  if ($LASTEXITCODE -ne 0) {
-    throw "Could not stamp executable metadata: $Path"
-  }
-}
-
 function Test-CodeSigningConfigured {
   return [bool]$env:CSC_LINK
 }
@@ -79,34 +51,6 @@ function Get-WindowsBuilderSigningArgs {
   return @("--config.win.signAndEditExecutable=false")
 }
 
-function Add-WindowsZipStartGuide {
-  param(
-    [Parameter(Mandatory = $true)]
-    [string]$UnpackedPath,
-
-    [Parameter(Mandatory = $true)]
-    [ValidateSet("x64", "arm64")]
-    [string]$Arch
-  )
-
-  $guidePath = Join-Path $UnpackedPath "How to start Coder Desktop.txt"
-  $guide = @"
-Coder Desktop portable ZIP
-
-Start here:
-1. Extract this ZIP first.
-2. Open Coder Desktop.exe.
-3. Keep Coder Desktop.exe in this folder with the resources folder and the other files.
-
-This ZIP is the portable backup package for Windows $Arch. The official download source is:
-https://github.com/elijahshepherd/Coder-Desktop/releases
-
-If Windows shows a safety prompt, click "More info" then "Run anyway" to confirm the file came from the official Coder Desktop release at github.com/elijahshepherd/Coder-Desktop. SmartScreen is reputation based and new releases may trigger it until the file gains trust through use.
-"@
-
-  Set-Content -LiteralPath $guidePath -Value $guide -Encoding UTF8
-}
-
 function Build-WindowsArch {
   param(
     [Parameter(Mandatory = $true)]
@@ -119,52 +63,29 @@ function Build-WindowsArch {
   } else {
     Join-Path $releasePath "win-arm64-unpacked"
   }
-  $appExe = Join-Path $unpacked "Coder Desktop.exe"
   $setupExe = Join-Path $releasePath "Coder-Desktop-$version-setup-win-$Arch.exe"
-  $portableExe = Join-Path $releasePath "Coder-Desktop-$version-win-$Arch.exe"
   $zipPath = Join-Path $releasePath "Coder-Desktop-$version-win-$Arch.zip"
   [string[]]$signingArgs = @(Get-WindowsBuilderSigningArgs)
 
-  if ($Arch -eq "x64") {
-    if ($Target -eq "nsis") {
-      Invoke-Checked { npm exec electron-builder -- --win nsis "--$Arch" @signingArgs --publish never }
-    } else {
-      Invoke-Checked { npm exec electron-builder -- --win portable "--$Arch" @signingArgs --publish never }
-    }
-  } else {
-    Invoke-Checked { npm exec electron-builder -- --win dir "--$Arch" @signingArgs --publish never }
+  Write-Host "Building Windows $Arch NSIS installer..."
+  Invoke-Checked { npm exec electron-builder -- --win nsis:$Arch @signingArgs --publish never }
+
+  if (-not (Test-Path -LiteralPath $setupExe)) {
+    throw "Expected installer was not found: $setupExe"
   }
 
-  if (-not (Test-CodeSigningConfigured)) {
-    Set-CoderDesktopMetadata -Path $appExe
+  $size = (Get-Item -LiteralPath $setupExe).Length
+  if ($size -lt 10MB) {
+    throw "Installer is too small to be a real application download: $setupExe ($size bytes)"
   }
 
-  if ($Arch -eq "x64" -and $Target -eq "nsis") {
-    if (-not (Test-Path -LiteralPath $setupExe)) {
-      throw "Expected installer was not found: $setupExe"
-    }
-
-    if ((Get-Item -LiteralPath $setupExe).Length -lt 10MB) {
-      throw "Installer is too small to be a real application download: $setupExe"
-    }
-  }
-
-  if ($Arch -eq "x64" -and $Target -eq "portable") {
-    if (-not (Test-Path -LiteralPath $portableExe)) {
-      throw "Expected portable executable was not found: $portableExe"
-    }
-
-    if ((Get-Item -LiteralPath $portableExe).Length -lt 10MB) {
-      throw "Portable executable is too small to be a real application download: $portableExe"
-    }
-  }
-
-  Add-WindowsZipStartGuide -UnpackedPath $unpacked -Arch $Arch
+  Write-Host "Creating distribution ZIP: $zipPath"
   Remove-Item -LiteralPath $zipPath -Force -ErrorAction SilentlyContinue
-  Compress-Archive -Path (Join-Path $unpacked "*") -DestinationPath $zipPath -CompressionLevel Optimal
+  Compress-Archive -Path $setupExe -DestinationPath $zipPath -CompressionLevel Optimal
 
-  if ((Get-Item -LiteralPath $zipPath).Length -lt 10MB) {
-    throw "Windows ZIP is too small to be a real application download: $zipPath"
+  $zipSize = (Get-Item -LiteralPath $zipPath).Length
+  if ($zipSize -lt 10MB) {
+    throw "Distribution ZIP is too small: $zipPath ($zipSize bytes)"
   }
 }
 
@@ -176,5 +97,16 @@ if (-not $SkipBuild) {
   Invoke-Checked { npm run build }
 }
 
-Build-WindowsArch -Arch "x64"
-Build-WindowsArch -Arch "arm64"
+foreach ($a in $Arch) {
+  $isArm64 = $a -eq "arm64"
+  $isArmHost = $env:PROCESSOR_ARCHITECTURE -eq "ARM64" -or $env:PROCESSOR_ARCHITEW6432 -eq "ARM64"
+
+  if ($isArm64 -and -not $isArmHost) {
+    Write-Host "Skipping arm64 build (not running on ARM64 host)."
+    continue
+  }
+
+  Build-WindowsArch -Arch $a
+}
+
+Write-Host "Windows build completed successfully."

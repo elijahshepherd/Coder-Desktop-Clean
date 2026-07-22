@@ -9,8 +9,23 @@ extraResources:
   - from: build/icon.png
     to: icon.png
 files:
-  - dist/**
-  - package.json
+  - "**/*"
+  - "!**/node_modules/**"
+  - "!**/release/**"
+  - "!**/.git/**"
+  - "!**/.github/**"
+  - "!**/*.md"
+  - "!**/*.ps1"
+  - "!**/*.sh"
+  - "!**/*.nsh"
+  - "!**/.vscode/**"
+  - "!**/.idea/**"
+  - "!**/dist/**/*.map"
+  - "!**/coverage/**"
+  - "!**/test/**"
+  - "!**/tests/**"
+  - "!**/*.test.ts"
+  - "!**/*.spec.ts"
 win:
   icon: build/icon.ico
   artifactName: Coder-Desktop-${version}-win-${arch}.${ext}
@@ -23,14 +38,6 @@ win:
     - target: nsis
       arch:
         - x64
-    - target: portable
-      arch:
-        - x64
-    - target: zip
-      arch:
-        - x64
-portable:
-  artifactName: Coder-Desktop-${version}-win-${arch}.${ext}
 nsis:
   oneClick: false
   perMachine: false

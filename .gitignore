@@ -1,6 +1,14 @@
 node_modules/
 dist/
 release/
+downloads/v*/Windows/*.exe
+downloads/v*/Windows/*.zip
+downloads/v*/Windows/*.blockmap
+downloads/v*/macOS/*.dmg
+downloads/v*/macOS/*.zip
+downloads/v*/Linux/*.AppImage
+downloads/v*/Linux/*.deb
+downloads/v*/Linux/*.rpm
 .vite/
 .cache/
 coverage/

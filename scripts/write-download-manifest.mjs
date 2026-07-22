@@ -93,10 +93,6 @@ function isGitLfsPointer(bytes) {
 }
 
 function inferPlatform(name) {
-  if (name.endsWith("windows-trust-report.txt")) {
-    return "Windows";
-  }
-
   if (name.includes("-win-") || name.includes("-win.")) {
     return "Windows";
   }
@@ -113,10 +109,6 @@ function inferPlatform(name) {
 }
 
 function inferFormat(name) {
-  if (name.endsWith("windows-trust-report.txt")) {
-    return "Windows trust report";
-  }
-
   if (name.includes("-setup-win-") && name.endsWith(".exe")) {
     return "Windows installer";
   }
@@ -149,5 +141,5 @@ function isWindowsZip(name) {
 }
 
 function isReleaseArtifactName(name) {
-  return artifactPattern.test(name) || name.endsWith("windows-trust-report.txt");
+  return artifactPattern.test(name);
 }

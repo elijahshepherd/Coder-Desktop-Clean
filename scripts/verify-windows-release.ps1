@@ -16,11 +16,11 @@ if (-not $Version) {
 $downloads = if ($DownloadsPath) { $DownloadsPath } else { Join-Path $repoRoot "downloads\$Version" }
 $requiredArtifacts = @(
   "Coder-Desktop-$Version-setup-win-x64.exe",
-  "Coder-Desktop-$Version-win-x64.exe",
   "Coder-Desktop-$Version-win-x64.zip"
 )
 
 $optionalArtifacts = @(
+  "Coder-Desktop-$Version-setup-win-arm64.exe",
   "Coder-Desktop-$Version-win-arm64.zip"
 )
 
@@ -75,7 +75,7 @@ foreach ($artifact in $requiredArtifacts) {
 
   $reportLines.Add("")
 
-  $reportLines.Add("Portable ZIP contents")
+  $reportLines.Add("NSIS installer ZIP contents")
   foreach ($zipName in @("Coder-Desktop-$Version-win-x64.zip", "Coder-Desktop-$Version-win-arm64.zip")) {
     $zipPath = Join-Path $downloads $zipName
     if (-not (Test-Path -LiteralPath $zipPath)) {
@@ -87,21 +87,18 @@ foreach ($artifact in $requiredArtifacts) {
     try {
       $entries = $zip.Entries | ForEach-Object { $_.FullName }
 
-      if ($entries -notcontains "Coder Desktop.exe") {
-        throw "$zipName does not contain root-level Coder Desktop.exe."
+      $expectedInstaller = "Coder-Desktop-$Version-setup-win-$($zipName -replace '.*win-(.*)\.zip', '$1').exe"
+      if ($entries -notcontains $expectedInstaller) {
+        throw "$zipName does not contain the NSIS installer: $expectedInstaller"
       }
 
-      if ($entries -notcontains "How to start Coder Desktop.txt") {
-        throw "$zipName does not contain the portable start guide."
-      }
-
-      $reportLines.Add("- $zipName includes root-level Coder Desktop.exe and How to start Coder Desktop.txt.")
+      $reportLines.Add("- $zipName includes NSIS installer ($expectedInstaller).")
     } finally {
       $zip.Dispose()
     }
   }
 
-$reportLines.Add("")
+  $reportLines.Add("")
 $reportLines.Add("Authenticode signatures")
 
 function Get-AuthenticodeStatus {

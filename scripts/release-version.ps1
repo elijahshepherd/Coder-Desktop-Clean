@@ -41,18 +41,7 @@ Invoke-Checked { powershell -ExecutionPolicy Bypass -File (Join-Path $repoRoot "
 
 Get-ChildItem -LiteralPath $release -File |
   Where-Object {
-    ($_.Name -like "Coder-Desktop-$version-win*" -or $_.Name -like "Coder-Desktop-$version-setup-win*") -and
-    $_.Extension -in @(".exe", ".zip", ".blockmap")
-  } |
-  ForEach-Object {
-    Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $windowsFolder $_.Name) -Force
-  }
-
-Invoke-Checked { powershell -ExecutionPolicy Bypass -File (Join-Path $repoRoot "scripts\build-windows.ps1") -Target nsis -SkipBuild }
-
-Get-ChildItem -LiteralPath $release -File |
-  Where-Object {
-    ($_.Name -like "Coder-Desktop-$version-setup-win*" -or $_.Name -like "Coder-Desktop-$version-win-arm64.zip") -and
+    ($_.Name -like "Coder-Desktop-$version-setup-win*" -or $_.Name -like "Coder-Desktop-$version-win-*.zip") -and
     $_.Extension -in @(".exe", ".zip", ".blockmap")
   } |
   ForEach-Object {
