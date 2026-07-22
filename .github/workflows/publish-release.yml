@@ -169,26 +169,26 @@ jobs:
           ls -lh "downloads/$versionPrefix"
 
       - name: Create GitHub Release
-              env:
-                GH_TOKEN: ${{ github.token }}
-              run: |
-                version="${GITHUB_REF_NAME#v}"
-                versionPrefix="v$version"
-                upload_args=()
-                # Collect all artifacts from platform folders
-                for file in "downloads/$versionPrefix/Windows"/* "downloads/$versionPrefix/macOS"/*; do
-                  if [ -f "$file" ]; then
-                    upload_args+=("$file")
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+                  version="${GITHUB_REF_NAME#v}"
+                  versionPrefix="v$version"
+                  upload_args=()
+                  # Collect all artifacts from platform folders
+                  for file in "downloads/$versionPrefix/Windows"/* "downloads/$versionPrefix/macOS"/*; do
+                    if [ -f "$file" ]; then
+                      upload_args+=("$file")
+                    fi
+                  done
+
+                  # Delete existing release if it exists (to ensure clean update with new notes)
+                  if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+                    gh release delete "$GITHUB_REF_NAME" --yes
                   fi
-                done
 
-                # Delete existing release if it exists (to ensure clean update with new notes)
-                if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-                  gh release delete "$GITHUB_REF_NAME" --yes
-                fi
-
-                # Create fresh release with updated notes
-                gh release create "$GITHUB_REF_NAME" "${upload_args[@]}" \
-                  --title "Coder Desktop $version" \
-                  --notes-file "docs/releases/$version.md" \
-                  --latest
+                  # Create fresh release with updated notes
+                  gh release create "$GITHUB_REF_NAME" "${upload_args[@]}" \
+                    --title "Coder Desktop $version" \
+                    --notes-file "docs/releases/$version.md" \
+                    --latest
