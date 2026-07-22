@@ -35,7 +35,7 @@
     "release:windows:nsis": "powershell -ExecutionPolicy Bypass -File scripts/build-windows.ps1 -Target nsis",
     "release:macos": "npm run build && electron-builder --mac zip --x64 --arm64",
     "release:manifest": "node scripts/write-download-manifest.mjs",
-    "release:current": "powershell -ExecutionPolicy Bypass -File scripts/release-version.ps1"
+    "release:current": "powershell -ExecutionPolicy Bypass -File scripts/build-windows.ps1"
   },
   "dependencies": {
     "diff": "^9.0.0",
