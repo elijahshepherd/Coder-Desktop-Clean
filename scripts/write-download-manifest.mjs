@@ -4,51 +4,64 @@ import { join } from "node:path";
 
 const packageJson = JSON.parse(await readFile("package.json", "utf8"));
 const version = packageJson.version;
-const downloadDir = join("downloads", version);
-const artifactPattern = /\.(exe|zip|dmg|AppImage|msi|blockmap)$/;
+const versionPrefix = `v${version}`;
+const downloadDir = join("downloads", versionPrefix);
+const platforms = ["Windows", "macOS", "Linux"];
 const manifestPath = join(downloadDir, "manifest.json");
 const existingManifest = await readExistingManifest(manifestPath);
 const existingArtifacts = new Map((existingManifest?.artifacts ?? []).map((artifact) => [artifact.name, artifact]));
 
-const files = (await readdir(downloadDir, { withFileTypes: true }))
-  .filter((entry) => entry.isFile() && isReleaseArtifactName(entry.name))
-  .map((entry) => entry.name)
-  .sort();
+const artifactPattern = /^Coder-Desktop-(\d+\.\d+\.\d+(-[a-zA-Z0-9.]+)?)-(win|mac|linux)-(x64|arm64)(\.exe|\.zip|\.dmg|\.AppImage|\.msi|\.blockmap)$/;
 
 const artifacts = [];
 
-for (const name of files) {
-  const path = join(downloadDir, name);
-  const bytes = await readFile(path);
+for (const platform of platforms) {
+  const platformDir = join(downloadDir, platform);
+  let files = [];
 
-  if (isGitLfsPointer(bytes)) {
-    const existingArtifact = existingArtifacts.get(name);
-
-    if (!existingArtifact) {
-      throw new Error(`${name} is a Git LFS pointer and no previous manifest entry exists to preserve.`);
-    }
-
-    artifacts.push(existingArtifact);
+  try {
+    files = (await readdir(platformDir, { withFileTypes: true }))
+      .filter((entry) => entry.isFile() && isReleaseArtifactName(entry.name))
+      .map((entry) => entry.name)
+      .sort();
+  } catch {
+    // Platform directory doesn't exist yet, skip
     continue;
   }
 
-  if (bytes.length <= 1024) {
-    throw new Error(`${name} looks too small to be a real download artifact.`);
-  }
+  for (const name of files) {
+    const path = join(platformDir, name);
+    const bytes = await readFile(path);
 
-  if (name.endsWith(".exe") && bytes.length < 10 * 1024 * 1024) {
-    throw new Error(`${name} is too small to be a real Windows application download.`);
-  }
+    if (isGitLfsPointer(bytes)) {
+      const existingArtifact = existingArtifacts.get(name);
 
-  artifacts.push({
-    name,
-    platform: inferPlatform(name),
-    format: inferFormat(name),
-    sizeBytes: bytes.length,
-    sha256: createHash("sha256").update(bytes).digest("hex"),
-    releaseSource: "GitHub Releases",
-    ...(isWindowsZip(name) ? { recommendedLaunchFile: "Coder Desktop.exe" } : {})
-  });
+      if (!existingArtifact) {
+        throw new Error(`${name} is a Git LFS pointer and no previous manifest entry exists to preserve.`);
+      }
+
+      artifacts.push(existingArtifact);
+      continue;
+    }
+
+    if (bytes.length <= 1024) {
+      throw new Error(`${name} looks too small to be a real download artifact.`);
+    }
+
+    if (name.endsWith(".exe") && bytes.length < 10 * 1024 * 1024) {
+      throw new Error(`${name} is too small to be a real Windows application download.`);
+    }
+
+    artifacts.push({
+      name,
+      platform: inferPlatform(name),
+      format: inferFormat(name),
+      sizeBytes: bytes.length,
+      sha256: createHash("sha256").update(bytes).digest("hex"),
+      releaseSource: "GitHub Releases",
+      ...(isWindowsZip(name) ? { recommendedLaunchFile: "Coder Desktop.exe" } : {})
+    });
+  }
 }
 
 await writeFile(

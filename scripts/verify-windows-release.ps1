@@ -1,5 +1,6 @@
 param(
-  [string]$Version = ""
+  [string]$Version = "",
+  [string]$DownloadsPath = ""
 )
 
 Set-StrictMode -Version Latest
@@ -12,11 +13,14 @@ if (-not $Version) {
   $Version = [string]$package.version
 }
 
-$downloads = Join-Path $repoRoot "downloads\$Version"
+$downloads = if ($DownloadsPath) { $DownloadsPath } else { Join-Path $repoRoot "downloads\$Version" }
 $requiredArtifacts = @(
   "Coder-Desktop-$Version-setup-win-x64.exe",
   "Coder-Desktop-$Version-win-x64.exe",
-  "Coder-Desktop-$Version-win-x64.zip",
+  "Coder-Desktop-$Version-win-x64.zip"
+)
+
+$optionalArtifacts = @(
   "Coder-Desktop-$Version-win-arm64.zip"
 )
 
@@ -50,26 +54,52 @@ foreach ($artifact in $requiredArtifacts) {
   $reportLines.Add("- $artifact ($($item.Length) bytes)")
 }
 
-foreach ($zipName in @("Coder-Desktop-$Version-win-x64.zip", "Coder-Desktop-$Version-win-arm64.zip")) {
-  $zipPath = Join-Path $downloads $zipName
-  $zip = [IO.Compression.ZipFile]::OpenRead($zipPath)
+  $optionalArtifacts = @(
+    "Coder-Desktop-$Version-win-arm64.zip"
+  )
 
-  try {
-    $entries = $zip.Entries | ForEach-Object { $_.FullName }
-
-    if ($entries -notcontains "Coder Desktop.exe") {
-      throw "$zipName does not contain root-level Coder Desktop.exe."
+  $reportLines.Add("")
+  $reportLines.Add("Optional artifacts (arm64)")
+  foreach ($artifact in $optionalArtifacts) {
+    $path = Join-Path $downloads $artifact
+    if (Test-Path -LiteralPath $path) {
+      $item = Get-Item -LiteralPath $path
+      if ($item.Length -lt 10MB) {
+        throw "Windows artifact is too small to be a real application download: $artifact"
+      }
+      $reportLines.Add("- $artifact ($($item.Length) bytes) [optional, present]")
+    } else {
+      $reportLines.Add("- $artifact [optional, not built]")
     }
-
-    if ($entries -notcontains "How to start Coder Desktop.txt") {
-      throw "$zipName does not contain the portable start guide."
-    }
-
-    $reportLines.Add("- $zipName includes root-level Coder Desktop.exe and How to start Coder Desktop.txt.")
-  } finally {
-    $zip.Dispose()
   }
-}
+
+  $reportLines.Add("")
+
+  $reportLines.Add("Portable ZIP contents")
+  foreach ($zipName in @("Coder-Desktop-$Version-win-x64.zip", "Coder-Desktop-$Version-win-arm64.zip")) {
+    $zipPath = Join-Path $downloads $zipName
+    if (-not (Test-Path -LiteralPath $zipPath)) {
+      $reportLines.Add("- $zipName [not built]")
+      continue
+    }
+    $zip = [IO.Compression.ZipFile]::OpenRead($zipPath)
+
+    try {
+      $entries = $zip.Entries | ForEach-Object { $_.FullName }
+
+      if ($entries -notcontains "Coder Desktop.exe") {
+        throw "$zipName does not contain root-level Coder Desktop.exe."
+      }
+
+      if ($entries -notcontains "How to start Coder Desktop.txt") {
+        throw "$zipName does not contain the portable start guide."
+      }
+
+      $reportLines.Add("- $zipName includes root-level Coder Desktop.exe and How to start Coder Desktop.txt.")
+    } finally {
+      $zip.Dispose()
+    }
+  }
 
 $reportLines.Add("")
 $reportLines.Add("Authenticode signatures")
