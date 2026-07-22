@@ -1,0 +1,242 @@
+{
+  "repo_notes": [
+    {
+      "content": ""
+    }
+  ],
+  "pages": [
+    {
+      "title": "Overview",
+      "purpose": "High-level introduction to Coder Desktop: what it is, its local-first AI coding workspace philosophy, the Electron + React + TypeScript stack, and a map of the major sections in this wiki.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Getting Started",
+      "purpose": "How to set up a development environment, run the app locally, configure environment variables, and understand the npm scripts (dev, build, typecheck, sync:version).",
+      "parent": "Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Project Structure",
+      "purpose": "Tour of the repository layout: src/main, src/preload, src/renderer, src/shared, scripts/, build/, docs/, and downloads/. Explains what lives where and why.",
+      "parent": "Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Core Architecture",
+      "purpose": "Overview of the four-layer Electron architecture (Main Process, Preload Bridge, Renderer, Shared Code) and the security model that governs communication between them. Links to child pages for each layer.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Main Process",
+      "purpose": "Deep dive into src/main: the Electron app lifecycle in main.ts, IPC handler registration in ipc.ts, the DesktopStore (state.json persistence and SecretsVault), background schedules (update checks, provider health checks, diagnostic scans, maintenance polling), and the generated-image custom protocol.",
+      "parent": "Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Preload Bridge",
+      "purpose": "How src/preload/preload.ts exposes the window.coderDesktop API via contextBridge. Lists every IPC channel, the DesktopApi TypeScript interface, and the security rationale for keeping the bridge narrow.",
+      "parent": "Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Renderer (React UI)",
+      "purpose": "The React application in src/renderer: App.tsx shell, Sidebar, ChatWorkspace, SettingsModal, OnboardingOverlay, UpdateNotice, and SubAppsModal. Covers the useCoderDesktopState hook, the desktopApi wrapper, theming/accent color logic, and queued-prompt management.",
+      "parent": "Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Shared Types and Defaults",
+      "purpose": "The contract layer in src/shared: types.ts (AppState, ChatThread, ChatMessage, ProviderSettings, SecuritySettings, DesktopApi, etc.), defaults.ts (default provider configs, security settings, personalization), providers.ts helpers, workspace.ts path utilities, and version.ts.",
+      "parent": "Core Architecture",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Features",
+      "purpose": "Overview of the major user-facing feature areas in Coder Desktop, linking to child pages for chat workflow, local tools, AI providers, image generation, and feedback/reporting.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Chat Workflow",
+      "purpose": "How chats are created, stored, and displayed. Covers chat titles, sidebar search, queued prompts, loading/thinking states, Markdown rendering, copy controls, todo progress cards, Let Me Know clarification cards, tool activity cards, provider error cards, and message feedback actions.",
+      "parent": "Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Local Tools and Security",
+      "purpose": "The local tool pipeline: file reading/editing/creation/deletion, shell command execution, Windows PowerShell information cards, internet tools (web search, page fetch, batch fetch, screen pull), and the access mode system (Ask for Approval / Approve for Me / Full Access). Covers workspace scoping, path validation, and permission checks in workspaceTools.ts and internetTools.ts.",
+      "parent": "Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "AI Providers and Model Management",
+      "purpose": "OpenAI, Claude, and NVIDIA provider configuration: API key storage via SecretsVault, primary model selection, up to three fallback models, reasoning effort, base URL sanitization, background health checks (providerTester.ts), automatic model removal/promotion, and provider error cards.",
+      "parent": "Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Image Generation",
+      "purpose": "NVIDIA FLUX image model scanning (scanProviderImageModels), chat image generation cards (one to three images), fallback across FLUX models, generated image persistence (generatedImages.ts), copy-link and native download actions, and the autonomous/auto-accept personalization settings.",
+      "parent": "Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Feedback and Bug Reporting",
+      "purpose": "Message feedback (like/dislike with optional note), automatic bug reports (issueReporter.ts), hourly diagnostic scans, privacy filtering (API key redaction, home path redaction, chat trimming), spam protection (fingerprint deduplication, daily limits), and GitHub authentication paths.",
+      "parent": "Features",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Security Model",
+      "purpose": "Overview of the security architecture: renderer isolation (contextIsolation, nodeIntegration: false, sandbox: true), IPC boundary design, local path handling rules, provider key storage, prompt privacy guard, external navigation restrictions, and update safety. Links to child pages for specific areas.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Renderer Isolation and IPC Design",
+      "purpose": "How the renderer is sandboxed, why contextBridge is used, the principle of narrow IPC channels, and the dangers of broad IPC methods. Covers the window.coderDesktop API surface and how it prevents direct Node.js access from the UI.",
+      "parent": "Security Model",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Local Tool Permissions and Path Safety",
+      "purpose": "The permission model for file reading, file editing, shell commands, PowerShell information commands, and internet access. Covers workspace boundary enforcement, absolute path rejection, oversized file read limits, and the SecuritySettings type.",
+      "parent": "Security Model",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Updates and Release System",
+      "purpose": "Overview of how Coder Desktop discovers, downloads, and installs updates, and how releases are packaged and distributed. Links to child pages for the update service and the release pipeline.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Update Service",
+      "purpose": "How UpdateService (src/main/updates.ts) checks GitHub Releases API, compares semantic versions, selects the best asset by platform and architecture, opens the download URL via shell.openExternal, and cleans up old Coder Desktop downloads (downloadCleanup.ts). Covers UpdateInfo, UpdateProgress, and UpdateInstallResult types.",
+      "parent": "Updates and Release System",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Release Pipeline and Packaging",
+      "purpose": "End-to-end release process: local Windows builds via scripts/release-version.ps1 and scripts/build-windows.ps1, macOS builds via scripts/build-macos-downloads.sh, the publish-release.yml GitHub Actions workflow (fan-in build-windows + build-macos → publish), manifest generation (write-download-manifest.mjs), Windows trust report and Authenticode verification (verify-windows-release.ps1), and the downloads/ directory structure.",
+      "parent": "Updates and Release System",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Infrastructure and CI/CD",
+      "purpose": "Overview of GitHub Actions workflows, repository governance, and tooling configuration. Links to child pages for CI and repository management.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Continuous Integration",
+      "purpose": "The ci.yml workflow: what it runs (typecheck, tests via vitest, lint), when it triggers, and how it gates pull requests. Covers the vitest.config.mts and vite.config.mts build tool configurations.",
+      "parent": "Infrastructure and CI/CD",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Repository Governance",
+      "purpose": "CODEOWNERS, GitHub labels (labels.yml, sync-labels.yml), issue templates (bug_report.yml, feature_request.yml, security_report.yml, config.yml), and the close-external-pull-requests.yml policy workflow.",
+      "parent": "Infrastructure and CI/CD",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Glossary",
+      "purpose": "Definitions of codebase-specific terms, abbreviations, and domain concepts that an onboarding engineer needs to know, with code pointers to relevant files and types.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    }
+  ]
+}
