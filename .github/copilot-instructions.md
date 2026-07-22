@@ -150,9 +150,9 @@ downloads/v0.1.0/
 - `files: ["**/*"]` with extensive exclusions (node_modules, release, .git, tests, scripts, etc.)
 
 ### Git & Large Files
-- Binary artifacts in `downloads/v*/` are tracked via **Git LFS** (`.gitattributes` tracks `*.exe`, `*.zip`, `*.blockmap`, `*.dmg`, `*.AppImage`)
-- `.gitignore` excludes `release/`, `dist/`, `node_modules/`, `*.log`, `.vite/`
-- **Do not commit large binaries directly** — they go to GitHub Releases via the publish workflow
+- Binary artifacts are published to **GitHub Releases** via the publish workflow (not committed to git)
+- `.gitignore` excludes `release/`, `dist/`, `node_modules/`, `*.log`, `.vite/`, and all `downloads/v*/` artifacts
+- **Do not commit large binaries** — they go to GitHub Releases via the publish workflow
 
 ### Code Style
 - ESLint not configured (TypeScript strict mode serves as primary check)
@@ -184,7 +184,7 @@ downloads/v0.1.0/
 
 ### Modify Build Output
 - Windows: edit `scripts/build-windows.ps1` or `electron-builder.yml` (win/nsis sections)
-- macOS: edit `.github/workflows/build-macos-downloads.yml` or `scripts/build-macos-downloads.sh`
+- macOS: edit `.github/workflows/publish-release.yml` (build-macos job)
 - Manifest: `scripts/write-download-manifest.mjs`
 
 ### Run Tests for Specific Test in Watch Mode

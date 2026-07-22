@@ -29,7 +29,7 @@ This repository is the desktop version of Coder. Other Coder projects, including
 > Coder Desktop is a desktop application. Browser renderer checks are only for development and documentation review.
 
 > [!IMPORTANT]
-> Official downloads should come from the versioned GitHub Release page. The `downloads` folder mirrors release artifacts for the repository archive, but a plain checkout may show Git LFS pointer files instead of full binaries.
+> Official downloads come from the versioned GitHub Release page. The `downloads` folder is a temporary staging area used by the GitHub Actions release workflow — binaries are never committed to git.
 
 > [!TIP]
 > Badge meanings, documentation tags, and maintenance rules are explained in [docs/status-badges.md](docs/status-badges.md).
@@ -169,7 +169,7 @@ Typical artifacts include:
 - Windows installer blockmap for update tooling.
 - Manifest with artifact sizes and SHA-256 hashes.
 
-GitHub Releases should attach the real files from the matching download folder. Binary artifacts are tracked through Git LFS in the repository, so the release page is the source of truth for normal user downloads.
+GitHub Releases attach the real files from the matching download folder. The publish workflow builds on Windows/macOS runners and uploads directly to the release — binaries are never stored in git.
 
 ## SmartScreen And Signing
 
@@ -186,7 +186,6 @@ Recommended local tools:
 - Node.js 20 or newer.
 - npm.
 - Git.
-- Git LFS.
 - PowerShell on Windows.
 
 Install dependencies:
