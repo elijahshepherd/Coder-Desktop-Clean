@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.1] - 2026-07-22
+
+### Changed
+- Updated app logo and icon across the entire application
+- New brand identity with inverted variant for dark mode
+
 ## [0.1.0] - 2026-06-22
 
 ### Added
