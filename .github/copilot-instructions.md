@@ -154,6 +154,16 @@ downloads/v0.1.0/
 - `.gitignore` excludes `release/`, `dist/`, `node_modules/`, `*.log`, `.vite/`, and all `downloads/v*/` artifacts
 - **Do not commit large binaries** — they go to GitHub Releases via the publish workflow
 
+### GitHub Release Requirements
+If an app uses GitHub Releases, it **must** follow these rules:
+
+1. Every release **must include a version tag** (e.g., `v0.1.0`).
+2. A GitHub Actions workflow **must automatically create the release** (`.github/workflows/publish-release.yml`).
+3. The workflow **must build and upload all required release assets** (Windows NSIS installer + ZIP, macOS ZIPs for x64/arm64).
+4. Release notes **must be generated from Markdown files** stored in `docs/releases/{version}.md`.
+5. The GitHub Release **must include both the Markdown release notes and downloadable assets**.
+6. Releases **must not be created manually** unless for testing or emergency fixes.
+
 ### Code Style
 - ESLint not configured (TypeScript strict mode serves as primary check)
 - Prettier not configured
