@@ -10,7 +10,6 @@ extraResources:
     to: icon.png
 files:
   - "**/*"
-  - "!**/node_modules/**"
   - "!**/release/**"
   - "!**/.git/**"
   - "!**/.github/**"
