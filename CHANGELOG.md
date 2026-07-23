@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.9] - 2026-07-23
+
+### Fixed
+- Logo visibility in light mode - CSS theme class now properly managed by App component
+
 ## [0.1.8] - 2026-07-23
 
 ### Added
