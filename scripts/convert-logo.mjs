@@ -1,6 +1,7 @@
 import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
+import toIco from 'to-ico';
 
 const inputPath = path.resolve('new-logo.png');
 const buildDir = path.resolve('build');
@@ -22,11 +23,19 @@ async function convertLogo() {
     .toFile(path.join(buildDir, 'icon.png'));
   console.log('Created build/icon.png (1024x1024)');
 
-  // 2. Create ICO (256x256 base - sharp doesn't support multi-size ICO directly)
-  await sharp(inputPath)
-    .resize(256, 256, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .toFile(path.join(buildDir, 'icon.ico'));
-  console.log('Created build/icon.ico (256x256 base)');
+  // 2. Create multi-size ICO for Windows (16, 32, 48, 256)
+  const icoSizes = [16, 32, 48, 256];
+  const pngBuffers = await Promise.all(
+    icoSizes.map(size =>
+      sharp(inputPath)
+        .resize(size, size, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+        .png()
+        .toBuffer()
+    )
+  );
+  const icoBuffer = await toIco(pngBuffers);
+  fs.writeFileSync(path.join(buildDir, 'icon.ico'), icoBuffer);
+  console.log('Created build/icon.ico (multi-size: 16, 32, 48, 256)');
 
   // 3. Create ICNS placeholder and iconset for macOS
   const icnsDir = path.join(buildDir, 'icon.iconset');
