@@ -6,12 +6,13 @@
 !include "StrFunc.nsh"
 
 ; ============================================================================
-; Variables
+; Variables (only defined in uninstaller context to avoid NSIS warning 6001)
 ; ============================================================================
 
+!ifdef UNINSTALLER
 Var ForceUninstallCheckbox
-Var LaunchAppCheckbox
 Var ForceUninstallFlag
+!endif
 
 ; ============================================================================
 ; Custom Installer Pages & Logic
@@ -56,8 +57,7 @@ Var ForceUninstallFlag
 !macroend
 
 ; ============================================================================
-; Force Uninstall Logic (triggered by /FORCE flag or checkbox)
-; Only compiled into uninstaller to avoid NSIS warning 6010
+; Force Uninstall Logic (Only compiled into uninstaller)
 ; ============================================================================
 
 !ifdef UNINSTALLER
