@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5] - 2026-07-23
+
+### Changed
+- Updated app logo and icons with new branding
+- Dark mode now uses light variant logo, light mode uses dark variant logo
+- Taskbar/desktop icon updated to match new branding
+
 ## [0.1.4] - 2026-07-23
 
 ### Fixed
