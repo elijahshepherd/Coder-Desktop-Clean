@@ -51,6 +51,11 @@ export function App() {
     }
   }, [theme]);
 
+    // Apply theme-dark class to document for CSS logo switching
+    useEffect(() => {
+      document.documentElement.classList.toggle("theme-dark", effectiveTheme === "dark");
+    }, [effectiveTheme]);
+
   useEffect(() => {
     if (!isSidebarResizing) {
       return undefined;
