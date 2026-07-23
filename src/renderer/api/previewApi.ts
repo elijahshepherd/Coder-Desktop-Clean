@@ -200,7 +200,8 @@ export function createPreviewApi(): DesktopApi {
     reportBug: () => Promise.resolve({ status: "skipped", message: "The browser preview does not send bug reports." }),
     resetLocalData: () => update(createDefaultState()),
     reinstallCurrentVersion: () => Promise.resolve("The browser preview cannot reinstall the desktop app."),
-    selectWorkspace: () =>
+        forceUninstall: (confirm: boolean) => Promise.resolve({ success: false, message: "The browser preview cannot uninstall the desktop app." }),
+        selectWorkspace: () =>
       update({
         ...state,
         workspace: {

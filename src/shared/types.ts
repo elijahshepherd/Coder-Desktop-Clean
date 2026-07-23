@@ -506,6 +506,7 @@ export interface DesktopApi {
   runCommand: (command: string) => Promise<ShellResult>;
   checkForUpdate: () => Promise<UpdateInfo | null>;
   installUpdate: () => Promise<UpdateInstallResult>;
+  forceUninstall: (confirm: boolean) => Promise<{ success: boolean; message: string }>;
   onStateChanged: (listener: (state: AppState) => void) => () => void;
   onUpdateAvailable: (listener: (update: UpdateInfo) => void) => () => void;
   onUpdateProgress: (listener: (progress: UpdateProgress) => void) => () => void;

@@ -51,7 +51,8 @@ const api: DesktopApi = {
   runCommand: (command) => ipcRenderer.invoke("shell:run", command),
   checkForUpdate: () => ipcRenderer.invoke("updates:check"),
   installUpdate: () => ipcRenderer.invoke("updates:install"),
-  onStateChanged: (listener) => {
+    forceUninstall: (confirm: boolean) => ipcRenderer.invoke("app:force-uninstall", confirm),
+    onStateChanged: (listener) => {
     const handler = (_event: IpcRendererEvent, state: AppState): void => listener(state);
     ipcRenderer.on("app:state-changed", handler);
     return () => ipcRenderer.removeListener("app:state-changed", handler);

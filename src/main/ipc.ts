@@ -89,7 +89,27 @@ export function registerIpcHandlers(store: DesktopStore, updateService: UpdateSe
   const activeControllers = new Map<string, AbortController>();
 
   ipcMain.handle("app:get-state", () => store.getPublicState());
-  ipcMain.handle("chat:create", () => store.createChat());
+    ipcMain.handle("app:force-uninstall", async (_event, confirm: boolean) => {
+      if (!confirm) {
+        return { success: false, message: "Force uninstall requires explicit confirmation." };
+      }
+      const { spawn } = await import("node:child_process");
+      const { join } = await import("node:path");
+      const { app } = await import("electron");
+    
+      const installPath = app.getPath("exe");
+      const uninstallString = `"${installPath}" --uninstall`;
+    
+      return new Promise<{ success: boolean; message: string }>((resolve) => {
+        const child = spawn("cmd.exe", ["/c", `start "" /wait ${uninstallString} /FORCE /S`], {
+          detached: true,
+          windowsHide: true
+        });
+        child.unref();
+        resolve({ success: true, message: "Force uninstall initiated. The application will close and remove itself." });
+      });
+    });
+    ipcMain.handle("chat:create", () => store.createChat());
   ipcMain.handle("starter:mark-seen", () => store.markStarterCardSeen());
   ipcMain.handle("chat:delete", (_event, chatId: string) => store.deleteChat(chatId));
   ipcMain.handle("chat:set-active", (_event, chatId: string) => store.setActiveChat(chatId));

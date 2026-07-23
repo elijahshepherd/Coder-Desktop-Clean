@@ -38,6 +38,12 @@ win:
     - target: nsis
       arch:
         - x64
+  # Security and identity improvements
+  publisherName: Elijah Shepherd
+  certificateFile: ${env:CSC_LINK}
+  certificatePassword: ${env:CSC_KEY_PASSWORD}
+  # Windows App Manifest embedded via rcedit (stamp-windows-executable.cjs)
+  # DPI awareness, execution level, and compatibility settings
 nsis:
   oneClick: false
   perMachine: false

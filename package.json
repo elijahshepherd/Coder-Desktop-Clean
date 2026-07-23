@@ -1,6 +1,6 @@
 {
   "name": "coder-desktop",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Local-first AI coding workspace for focused desktop software development.",
   "main": "dist/main/main.js",
   "author": "Elijah Shepherd",
@@ -35,8 +35,10 @@
     "release:windows:nsis": "powershell -ExecutionPolicy Bypass -File scripts/build-windows.ps1 -Target nsis",
     "release:macos": "npm run build && electron-builder --mac zip --x64 --arm64",
     "release:manifest": "node scripts/write-download-manifest.mjs",
-    "release:current": "powershell -ExecutionPolicy Bypass -File scripts/build-windows.ps1"
-  },
+      "release:current": "powershell -ExecutionPolicy Bypass -File scripts/build-windows.ps1",
+      "uninstall:windows": "powershell -ExecutionPolicy Bypass -File scripts/uninstall-windows.ps1 -Force",
+      "uninstall:windows:userdata": "powershell -ExecutionPolicy Bypass -File scripts/uninstall-windows.ps1 -Force -RemoveUserData"
+    },
   "dependencies": {
     "diff": "^9.0.0",
     "lucide-react": "^0.468.0",
