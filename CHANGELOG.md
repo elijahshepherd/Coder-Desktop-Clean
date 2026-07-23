@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.8] - 2026-07-23
+
+### Added
+- System theme option ("System") that automatically follows OS dark/light preference
+- New light/dark logo variants with proper contrast for each theme
+
+### Fixed
+- Logo contrast now correct in both light and dark modes
+- App icon uses dark logo as default (works on light taskbars)
+
+### Changed
+- Default theme changed to "system" for automatic adaptation
+
 ## [0.1.5] - 2026-07-23
 
 ### Changed
