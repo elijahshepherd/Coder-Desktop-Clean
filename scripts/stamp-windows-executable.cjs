@@ -12,8 +12,6 @@ module.exports = async function stampWindowsExecutable(context) {
   const exePath = path.join(context.appOutDir, `${appInfo.productFilename}.exe`);
   const rcedit = path.join(repoRoot, "node_modules", "electron-winstaller", "vendor", "rcedit.exe");
   const icon = path.join(repoRoot, "build", "icon.ico");
-  const manifest = path.join(repoRoot, "build", "app.manifest");
-
   const args = [
       exePath,
       "--set-version-string", "FileDescription", "Coder Desktop - Local-first AI coding workspace",
@@ -29,10 +27,9 @@ module.exports = async function stampWindowsExecutable(context) {
       "--set-icon", icon
     ];
 
-  // Embed manifest if it exists (for proper DPI awareness, execution level, etc.)
-  if (fs.existsSync(manifest)) {
-    args.push("--set-manifest", manifest);
-  }
+  // Note: --set-manifest is not supported by the rcedit version bundled with
+  // electron-winstaller 5.4.0. The manifest is instead applied via Windows
+  // resource compilation by electron-builder when win.manifest is configured.
 
   const result = spawnSync(rcedit, args, { encoding: "utf8" });
 

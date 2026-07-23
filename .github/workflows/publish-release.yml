@@ -109,7 +109,7 @@ jobs:
           versionPrefix="v$version"
           rm -rf release-upload
           npm run build
-          npm exec electron-builder -- --mac zip --x64 --arm64
+          npm exec electron-builder -- --mac zip --x64 --arm64 --publish never
           mkdir -p "downloads/$versionPrefix/macOS"
           mkdir -p release-upload
           cp "release/Coder-Desktop-$version-mac-x64.zip" "downloads/$versionPrefix/macOS/"

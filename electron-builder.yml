@@ -34,6 +34,7 @@ win:
   forceCodeSigning: false
   signAndEditExecutable: false
   verifyUpdateCodeSignature: false
+  manifest: build/app.manifest
   target:
     - target: nsis
       arch:
