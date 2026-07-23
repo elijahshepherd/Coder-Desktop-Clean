@@ -1,6 +1,6 @@
 {
   "name": "coder-desktop",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Local-first AI coding workspace for focused desktop software development.",
   "main": "dist/main/main.js",
   "author": "Elijah Shepherd",
