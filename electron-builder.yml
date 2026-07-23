@@ -38,8 +38,6 @@ win:
     - target: nsis
       arch:
         - x64
-  # Security and identity improvements
-  publisherName: Elijah Shepherd
   # Windows App Manifest embedded via rcedit (stamp-windows-executable.cjs)
   # DPI awareness, execution level, and compatibility settings
 nsis:
