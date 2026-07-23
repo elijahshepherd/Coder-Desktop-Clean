@@ -19,7 +19,7 @@ Var ForceUninstallFlag
 
 !macro customCheckAppRunning
   DetailPrint "Closing Coder Desktop before installing."
-  nsExec::Exec `"$CmdPath" /C taskkill /IM "Coder Desktop.exe" /F /T`
+  nsExec::Exec `"$SYSDIR\cmd.exe" /C taskkill /IM "Coder Desktop.exe" /F /T`
   Pop $0
   Sleep 800
 !macroend
@@ -61,7 +61,7 @@ Var ForceUninstallFlag
 
 Function ForceCleanup
   DetailPrint "Force cleaning Coder Desktop installation..."
-  nsExec::Exec `"$CmdPath" /C taskkill /IM "Coder Desktop.exe" /F /T`
+  nsExec::Exec `"$SYSDIR\cmd.exe" /C taskkill /IM "Coder Desktop.exe" /F /T`
   Pop $0
   Sleep 1000
   RMDir /r "$INSTDIR"
