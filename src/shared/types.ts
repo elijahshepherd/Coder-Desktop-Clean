@@ -60,7 +60,7 @@ export interface SecuritySettings {
 export type AccessMode = "ask-approval" | "approve" | "full";
 
 export type AccentTone = "graphite" | "blue" | "green" | "rose" | "custom";
-export type ThemeMode = "light" | "dark";
+export type ThemeMode = "light" | "dark" | "system";
 
 export interface PersonalizationSettings {
   theme: ThemeMode;

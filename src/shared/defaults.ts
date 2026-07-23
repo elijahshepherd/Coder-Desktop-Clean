@@ -102,7 +102,7 @@ export const defaultSecuritySettings: SecuritySettings = {
 };
 
 export const defaultPersonalizationSettings: PersonalizationSettings = {
-  theme: "light",
+  theme: "system",
   accentTone: "graphite",
   customAccentColor: "#2563eb",
   completionAnimation: true,

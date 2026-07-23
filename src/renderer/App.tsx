@@ -22,8 +22,34 @@ export function App() {
   const [isSidebarResizing, setIsSidebarResizing] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(244);
   const [isThemeWaveVisible, setIsThemeWaveVisible] = useState(false);
+  const [effectiveTheme, setEffectiveTheme] = useState<"light" | "dark">(() => {
+    if (theme === "system") {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    return theme;
+  });
   const hasSeenInitialThemeRef = useRef(false);
   const previousThemeRef = useRef(theme);
+
+  // Listen for system theme changes
+  useEffect(() => {
+    if (theme !== "system") return;
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (event: MediaQueryListEvent) => {
+      setEffectiveTheme(event.matches ? "dark" : "light");
+    };
+
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, [theme]);
+
+  // Update effectiveTheme when theme setting changes
+  useEffect(() => {
+    if (theme !== "system") {
+      setEffectiveTheme(theme);
+    }
+  }, [theme]);
 
   useEffect(() => {
     if (!isSidebarResizing) {
@@ -143,12 +169,12 @@ export function App() {
 
   const appStyle = {
     "--sidebar-width": `${isSidebarCollapsed ? collapsedSidebarWidth : sidebarWidth}px`,
-    ...createAccentStyle(state.personalization, theme)
+    ...createAccentStyle(state.personalization, effectiveTheme)
   } as CSSProperties;
 
   return (
     <main
-      className={`app-shell theme-${theme} tone-${state.personalization.accentTone}${isSidebarCollapsed ? " sidebar-collapsed" : ""}${
+      className={`app-shell theme-${effectiveTheme} tone-${state.personalization.accentTone}${isSidebarCollapsed ? " sidebar-collapsed" : ""}${
         isSidebarResizing ? " sidebar-resizing" : ""
       }`}
       style={appStyle}
@@ -355,3 +381,4 @@ function relativeLuminance({ r, g, b }: { r: number; g: number; b: number }): nu
 
   return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
 }
+

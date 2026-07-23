@@ -541,7 +541,7 @@ export function SettingsPanel({
                   <p>Choose how the app and logo contrast.</p>
                 </div>
                 <div className="theme-options" role="group" aria-label="Theme">
-                  {(["light", "dark"] as ThemeMode[]).map((mode) => {
+                                  {(["light", "dark", "system"] as ThemeMode[]).map((mode) => {
                     const isSelected = personalization.theme === mode;
 
                     return (
@@ -552,7 +552,7 @@ export function SettingsPanel({
                         aria-pressed={isSelected}
                         onClick={() => updatePersonalization({ theme: mode })}
                       >
-                        <span>{mode === "light" ? "Light mode" : "Dark mode"}</span>
+                                        <span>{mode === "light" ? "Light mode" : mode === "dark" ? "Dark mode" : "System"}</span>
                       </button>
                     );
                   })}
