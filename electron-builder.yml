@@ -60,6 +60,9 @@ mac:
   target:
     - dmg
     - zip
+  hardenedRuntime: false
+  identity: null
+
 linux:
   icon: build/icon.png
   category: Development
@@ -68,6 +71,7 @@ linux:
     - AppImage
     - zip
 
-# Code signing configuration (set CSC_LINK and CSC_KEY_PASSWORD in GitHub Actions secrets)
-cscLink: ${env:CSC_LINK}
-cscKeyPassword: ${env:CSC_KEY_PASSWORD}
+# Code signing is configured via environment variables (CSC_LINK, CSC_KEY_PASSWORD).
+# When unset, electron-builder produces unsigned builds automatically.
+# Windows signing is disabled via win.signAndEditExecutable: false above.
+# macOS signing is disabled via mac.identity: null above.
