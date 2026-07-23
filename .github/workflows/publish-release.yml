@@ -46,26 +46,32 @@ jobs:
             exit $LASTEXITCODE
           }
 
-          $downloads = "downloads\$versionPrefix\Windows"
-          $releaseUpload = "release-upload"
-          if (Test-Path -LiteralPath $releaseUpload) {
-            Remove-Item -LiteralPath $releaseUpload -Recurse -Force
-          }
-          New-Item -ItemType Directory -Force -Path $releaseUpload | Out-Null
+                $releasePath = "release"
+                $downloads = "downloads\$versionPrefix\Windows"
+                $releaseUpload = "release-upload"
+          
+                if (Test-Path -LiteralPath $releaseUpload) {
+                  Remove-Item -LiteralPath $releaseUpload -Recurse -Force
+                }
+                New-Item -ItemType Directory -Force -Path $releaseUpload | Out-Null
+          
+                New-Item -ItemType Directory -Force -Path $downloads | Out-Null
 
-          Get-ChildItem -LiteralPath $downloads -File |
-            Where-Object {
-              ($_.Extension -in @(".exe", ".zip", ".blockmap") -and $_.Name -match "-win-") -or
-              $_.Name -eq "Coder-Desktop-$version-windows-trust-report.txt"
-            } |
-            ForEach-Object {
-              if ($_.Extension -eq ".exe" -and $_.Length -lt 10MB) {
-                throw "Windows executable is too small to be a real application download: $($_.FullName)"
-              }
-              Copy-Item -LiteralPath $_.FullName -Destination $releaseUpload
-            }
+                # Copy from release/ to downloads/ for the publish job
+                Get-ChildItem -LiteralPath $releasePath -File |
+                  Where-Object {
+                    ($_.Extension -in @(".exe", ".zip", ".blockmap") -and $_.Name -match "-win-") -or
+                    $_.Name -eq "Coder-Desktop-$version-windows-trust-report.txt"
+                  } | 
+                  ForEach-Object {
+                    if ($_.Extension -eq ".exe" -and $_.Length -lt 10MB) {
+                      throw "Windows executable is too small to be a real application download: $($_.FullName)"
+                    }
+                    Copy-Item -LiteralPath $_.FullName -Destination $downloads
+                    Copy-Item -LiteralPath $_.FullName -Destination $releaseUpload
+                  }
 
-          Get-ChildItem -LiteralPath $releaseUpload -File | Format-Table Name, Length
+                Get-ChildItem -LiteralPath $releaseUpload -File | Format-Table Name, Length
       - name: Upload Windows assets
         uses: actions/upload-artifact@v4
         with:
