@@ -5,15 +5,13 @@
 !include "LogicLib.nsh"
 !include "StrFunc.nsh"
 
-; Declare StrStr for GetParameters support
-${StrStr}
-
 ; ============================================================================
 ; Variables
 ; ============================================================================
 
 Var ForceUninstallCheckbox
 Var LaunchAppCheckbox
+Var ForceUninstallFlag
 
 ; ============================================================================
 ; Custom Installer Pages & Logic
@@ -38,6 +36,13 @@ Var LaunchAppCheckbox
 
 !macro customUninstallInit
   RequestExecutionLevel user
+  ; Check for /FORCE flag in command line
+  StrCpy $ForceUninstallFlag 0
+  ${GetParameters} $0
+  ${StrStr} $0 "/FORCE" $1
+  StrCmp $1 "" NoForceFlag
+    StrCpy $ForceUninstallFlag 1
+  NoForceFlag:
 !macroend
 
 !macro customUninstallFiles
@@ -51,27 +56,14 @@ Var LaunchAppCheckbox
 !macroend
 
 ; ============================================================================
-; Force Uninstall Support (for recovery when normal uninstall fails)
-; Called via command line: uninstall.exe /FORCE
+; Force Uninstall Logic (triggered by /FORCE flag or checkbox)
 ; ============================================================================
-
-Function ForceUninstall
-  ${GetParameters} $0
-  ${StrStr} $0 "/FORCE" $1
-  StrCmp $1 "" NormalUninstall
-
-  DetailPrint "Force uninstall requested - performing aggressive cleanup"
-  nsExec::Exec `"$CmdPath" /C taskkill /IM "Coder Desktop.exe" /F /T`
-  Pop $0
-  Sleep 1000
-  Call ForceCleanup
-  Quit
-
-NormalUninstall:
-FunctionEnd
 
 Function ForceCleanup
   DetailPrint "Force cleaning Coder Desktop installation..."
+  nsExec::Exec `"$CmdPath" /C taskkill /IM "Coder Desktop.exe" /F /T`
+  Pop $0
+  Sleep 1000
   RMDir /r "$INSTDIR"
   Delete "$SMPROGRAMS\Coder Desktop.lnk"
   Delete "$DESKTOP\Coder Desktop.lnk"
@@ -105,9 +97,11 @@ FunctionEnd
 !macro customUninstallLeave
   ${NSD_GetState} $ForceUninstallCheckbox $0
   StrCmp $0 ${BST_CHECKED} ForceUninstallSelected
+  StrCmp $ForceUninstallFlag 1 ForceUninstallSelected
   Goto NormalUninstallPath
 ForceUninstallSelected:
-  WriteRegStr HKCU "Software\Coder Desktop" "ForceUninstall" "1"
+  Call ForceCleanup
+  Quit
 NormalUninstallPath:
 !macroend
 
