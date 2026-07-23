@@ -34,13 +34,13 @@ win:
   forceCodeSigning: false
   signAndEditExecutable: false
   verifyUpdateCodeSignature: false
-  manifest: build/app.manifest
   target:
     - target: nsis
       arch:
         - x64
-  # Windows App Manifest embedded via rcedit (stamp-windows-executable.cjs)
-  # DPI awareness, execution level, and compatibility settings
+  # Windows app manifest (build/app.manifest) provides PerMonitorV2 DPI
+  # awareness, asInvoker execution level, and Windows 10/11 compatibility.
+  # It is bundled as an extraResource; rcedit 0.2.0 cannot embed it.
 nsis:
   oneClick: false
   perMachine: false
