@@ -38,6 +38,8 @@ win:
     - target: nsis
       arch:
         - x64
+  # Security and identity improvements
+  publisherName: Elijah Shepherd
   # Windows App Manifest embedded via rcedit (stamp-windows-executable.cjs)
   # DPI awareness, execution level, and compatibility settings
 nsis:
@@ -71,4 +73,3 @@ linux:
 # Code signing configuration (set CSC_LINK and CSC_KEY_PASSWORD in GitHub Actions secrets)
 cscLink: ${env:CSC_LINK}
 cscKeyPassword: ${env:CSC_KEY_PASSWORD}
-publisherName: Elijah Shepherd
