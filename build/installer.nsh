@@ -19,7 +19,7 @@ Var ForceUninstallFlag
 
 !macro customCheckAppRunning
   DetailPrint "Closing Coder Desktop before installing."
-  nsExec::Exec `"$SYSDIR\cmd.exe" /C taskkill /IM "Coder Desktop.exe" /F /T`
+  nsExec::Exec `"$CmdPath" /C taskkill /IM "Coder Desktop.exe" /F /T`
   Pop $0
   Sleep 800
 !macroend
@@ -57,11 +57,13 @@ Var ForceUninstallFlag
 
 ; ============================================================================
 ; Force Uninstall Logic (triggered by /FORCE flag or checkbox)
+; Only compiled into uninstaller to avoid NSIS warning 6010
 ; ============================================================================
 
+!ifdef UNINSTALLER
 Function ForceCleanup
   DetailPrint "Force cleaning Coder Desktop installation..."
-  nsExec::Exec `"$SYSDIR\cmd.exe" /C taskkill /IM "Coder Desktop.exe" /F /T`
+  nsExec::Exec `"$CmdPath" /C taskkill /IM "Coder Desktop.exe" /F /T`
   Pop $0
   Sleep 1000
   RMDir /r "$INSTDIR"
@@ -76,6 +78,7 @@ Function ForceCleanup
   DeleteRegKey HKLM "Software\Classes\AppUserModelId\com.elijahshepherd.coderdesktop"
   DetailPrint "Force cleanup complete."
 FunctionEnd
+!endif
 
 ; ============================================================================
 ; Custom Uninstaller Page (shows force uninstall option)
@@ -100,8 +103,10 @@ FunctionEnd
   StrCmp $ForceUninstallFlag 1 ForceUninstallSelected
   Goto NormalUninstallPath
 ForceUninstallSelected:
+!ifdef UNINSTALLER
   Call ForceCleanup
   Quit
+!endif
 NormalUninstallPath:
 !macroend
 
